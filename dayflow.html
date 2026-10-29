@@ -1,0 +1,434 @@
+
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DAYFLOW — Kun tartibim</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --bg: #0b0d14;
+  --panel: #141722;
+  --panel2: #1b2030;
+  --text: #f4f5fc;
+  --muted: #9298ad;
+  --accent: #9b8cff;
+  --green: #69e6b0;
+  --border: #292d3d;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Inter, Arial, sans-serif;
+}
+button, input, select { font: inherit; }
+button { cursor: pointer; }
+.app { display: flex; min-height: 100vh; }
+.sidebar {
+  width: 235px; padding: 28px 18px;
+  border-right: 1px solid var(--border);
+  background: #0e1018; flex-shrink: 0;
+}
+.logo { font-size: 23px; font-weight: 800; letter-spacing: 1px; }
+.logo span { color: var(--accent); }
+.logo small { display:block; color:var(--muted); font-size:10px; letter-spacing:3px; margin-top:5px; }
+.nav-title { color:var(--muted); font-size:11px; margin:40px 12px 13px; letter-spacing:2px; }
+.nav-item {
+  padding:13px 14px; border-radius:11px; margin:5px 0;
+  color:var(--muted); cursor:pointer; font-size:14px;
+}
+.nav-item.active, .nav-item:hover { background:#252139; color:white; }
+.nav-item.active { border:1px solid #403866; }
+.side-note {
+  margin-top:45px; padding:16px; border:1px solid var(--border);
+  border-radius:15px; background:var(--panel);
+}
+.side-note strong { font-size:13px; }
+.side-note p { color:var(--muted); font-size:12px; line-height:1.7; }
+.main { flex:1; min-width:0; padding:30px clamp(16px,4vw,48px); max-width:1500px; margin:auto; width:100%; }
+.topbar { display:flex; justify-content:space-between; align-items:center; gap:15px; margin-bottom:35px; }
+.date-label { color:var(--muted); font-size:13px; margin-bottom:7px; }
+h1 { font-size:clamp(24px,3vw,35px); margin:0; letter-spacing:-1px; }
+.top-right { display:flex; align-items:center; gap:12px; }
+.clock { color:var(--accent); font-size:15px; font-weight:700; }
+.avatar { width:40px; height:40px; border-radius:13px; display:grid; place-items:center; background:#30294e; }
+.welcome {
+  padding:28px; border:1px solid #34304e; border-radius:20px;
+  background:radial-gradient(ellipse at 85% 15%, #38305f 0%, transparent 42%), linear-gradient(120deg,#1b1b30,#151824);
+  margin-bottom:23px; position:relative; overflow:hidden;
+}
+.welcome .eyebrow { color:var(--green); font-size:11px; letter-spacing:2px; font-weight:700; }
+.welcome h2 { font-size:clamp(22px,3vw,31px); margin:14px 0 8px; }
+.welcome p { color:#b6b8ca; font-size:14px; line-height:1.7; margin:0; max-width:500px; }
+.stats { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:15px; margin-bottom:28px; }
+.stat { background:var(--panel); border:1px solid var(--border); padding:20px; border-radius:16px; }
+.stat-top { display:flex; justify-content:space-between; gap:8px; color:var(--muted); font-size:12px; }
+.stat-icon { font-size:18px; }
+.stat-number { font-size:28px; font-weight:800; margin:16px 0 5px; }
+.stat-sub { color:var(--muted); font-size:11px; }
+.section-head { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:17px; }
+.section-head h2 { font-size:19px; margin:0; }
+.section-head span { color:var(--muted); font-size:12px; }
+.content-grid { display:grid; grid-template-columns:minmax(0,1.5fr) minmax(250px,0.85fr); gap:20px; align-items:start; }
+.panel { background:var(--panel); border:1px solid var(--border); border-radius:18px; padding:21px; min-width:0; }
+.add-form { display:grid; grid-template-columns:minmax(0,1fr) 105px; gap:9px; margin-bottom:10px; }
+.field { width:100%; background:#0d1018; border:1px solid var(--border); border-radius:10px; padding:12px; color:white; outline:none; }
+.field:focus { border-color:var(--accent); }
+.form-bottom { display:grid; grid-template-columns:1fr 1fr auto; gap:9px; margin-bottom:20px; }
+.btn { border:0; border-radius:10px; padding:12px 16px; background:var(--accent); color:#111020; font-weight:800; }
+.btn:hover { filter:brightness(1.12); }
+.btn-secondary { background:var(--panel2); border:1px solid var(--border); color:var(--text); }
+.task-list { display:flex; flex-direction:column; gap:9px; }
+.task {
+  display:flex; gap:12px; align-items:center; padding:14px;
+  background:#10131d; border:1px solid #252a3a; border-radius:12px;
+}
+.task-check { width:18px; height:18px; accent-color:var(--accent); flex-shrink:0; }
+.task-info { flex:1; min-width:0; }
+.task-name { font-size:13px; font-weight:600; overflow-wrap:anywhere; }
+.task-time { color:var(--muted); font-size:11px; margin-top:6px; }
+.task.done .task-name { text-decoration:line-through; color:#777e91; }
+.tag { color:var(--accent); font-size:10px; background:#27213f; padding:5px 7px; border-radius:6px; white-space:nowrap; }
+.delete { color:#a3a6b7; background:none; border:0; font-size:17px; padding:3px 5px; }
+.delete:hover { color:#ff7e94; }
+.empty { text-align:center; padding:35px 10px; color:var(--muted); font-size:13px; line-height:1.8; }
+.progress-ring { display:flex; justify-content:center; margin:22px 0; }
+.ring {
+  width:155px; height:155px; border-radius:50%;
+  display:grid; place-items:center;
+  background:conic-gradient(var(--accent) var(--progress,0%), #292d3e 0);
+  position:relative;
+}
+.ring::before { content:""; position:absolute; inset:10px; border-radius:50%; background:var(--panel); }
+.ring-center { position:relative; text-align:center; }
+.ring-center strong { display:block; font-size:30px; }
+.ring-center span { color:var(--muted); font-size:11px; }
+.progress-caption { text-align:center; color:var(--muted); font-size:12px; margin-bottom:20px; }
+.mini-stats { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.mini-stat { background:#10131d; padding:14px; border-radius:12px; }
+.mini-stat strong { font-size:20px; display:block; margin-bottom:6px; }
+.mini-stat span { color:var(--muted); font-size:11px; }
+.tip { margin-top:16px; padding:15px; background:#1c2530; border:1px solid #293b43; border-radius:12px; }
+.tip strong { font-size:12px; color:var(--green); }
+.tip p { font-size:12px; line-height:1.7; color:#b9c8ca; margin-bottom:0; }
+footer { text-align:center; padding:30px 0 10px; color:#656b7d; font-size:11px; }
+@media(max-width:850px) {
+  .sidebar { width:75px; padding:20px 10px; }
+  .logo { font-size:17px; text-align:center; }
+  .logo small, .nav-title, .nav-text, .side-note { display:none; }
+  .nav-item { text-align:center; padding:13px 4px; font-size:19px; }
+  .content-grid { grid-template-columns:1fr; }
+}
+@media(max-width:560px) {
+  .main { padding:20px 13px; }
+  .topbar { margin-bottom:22px; }
+  .stats { gap:8px; }
+  .stat { padding:13px 10px; }
+  .stat-number { font-size:23px; }
+  .stat-top { font-size:10px; }
+  .stat-sub { font-size:10px; }
+  .welcome { padding:22px 18px; }
+  .panel { padding:15px; }
+  .form-bottom { grid-template-columns:1fr 1fr; }
+  .form-bottom button { grid-column:1/-1; }
+  .add-form { grid-template-columns:1fr; }
+  .clock { display:none; }
+  .tag { display:none; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo">DAY<span>FLOW</span><small>PLAN YOUR DAY</small></div>
+    <div class="nav-title">ASOSIY</div>
+    <div class="nav-item active" data-filter="all">📋 <span class="nav-text">Barcha vazifalar</span></div>
+    <div class="nav-item" data-filter="today">📅 <span class="nav-text">Bugungi reja</span></div>
+    <div class="nav-item" data-filter="done">✅ <span class="nav-text">Bajarilganlar</span></div>
+    <div class="nav-item" data-filter="pending">⏳ <span class="nav-text">Bajarilmaganlar</span></div>
+    <div class="side-note">
+      <strong>💡 Kun maslahati</strong>
+      <p>Katta maqsadlar kichik, muntazam qadamlardan boshlanadi.</p>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <div class="date-label" id="dateLabel"></div>
+        <h1>Kun tartibim 👋</h1>
+      </div>
+      <div class="top-right"><div class="clock" id="clock"></div><div class="avatar">👤</div></div>
+    </header>
+
+    <section class="welcome">
+      <div class="eyebrow">✦ YANGI KUN, YANGI IMKONIYATLAR</div>
+      <h2>Bugun maqsadlaring sari qadam tashla.</h2>
+      <p>Rejalaringni yoz, muhim ishlaringni bajar va har bir kichik yutug‘ingdan zavqlan.</p>
+    </section>
+
+    <section class="stats">
+      <div class="stat">
+        <div class="stat-top">Jami vazifalar <span class="stat-icon">📋</span></div>
+        <div class="stat-number" id="totalCount">0</div>
+        <div class="stat-sub">Rejangdagi barcha ishlar</div>
+      </div>
+      <div class="stat">
+        <div class="stat-top">Bajarilgan <span class="stat-icon">⚡</span></div>
+        <div class="stat-number" id="doneCount">0</div>
+        <div class="stat-sub">Muvaffaqiyatli yakunlangan</div>
+      </div>
+      <div class="stat">
+        <div class="stat-top">Qolgan ishlar <span class="stat-icon">🎯</span></div>
+        <div class="stat-number" id="pendingCount">0</div>
+        <div class="stat-sub">Oldinda turgan vazifalar</div>
+      </div>
+    </section>
+
+    <div class="content-grid">
+      <section class="panel">
+        <div class="section-head">
+          <h2 id="listTitle">📌 Bugungi vazifalar</h2>
+          <span id="listCount">0 ta vazifa</span>
+        </div>
+        <form id="taskForm">
+          <div class="add-form">
+            <input class="field" id="taskInput" placeholder="Masalan: Ingliz tilini o‘rganish..." maxlength="120" required>
+            <button class="btn" type="submit">＋ Qo‘shish</button>
+          </div>
+          <div class="form-bottom">
+            <input class="field" type="time" id="taskTime" value="09:00" aria-label="Vaqt">
+            <select class="field" id="taskCategory" aria-label="Vazifa turi">
+              <option value="Shaxsiy">👤 Shaxsiy</option>
+              <option value="O‘qish">📚 O‘qish</option>
+              <option value="Ish">💼 Ish</option>
+              <option value="Sport">🏃 Sport</option>
+              <option value="Dam olish">🌿 Dam olish</option>
+            </select>
+            <button class="btn btn-secondary" type="button" id="sampleBtn">Namuna qo‘shish</button>
+          </div>
+        </form>
+        <div class="task-list" id="taskList"></div>
+      </section>
+
+      <section class="panel">
+        <div class="section-head"><h2>📈 Kunlik natija</h2></div>
+        <div class="progress-ring">
+          <div class="ring" id="ring">
+            <div class="ring-center"><strong id="percent">0%</strong><span>bajarildi</span></div>
+          </div>
+        </div>
+        <div class="progress-caption" id="progressCaption">Boshlash uchun vazifa qo‘shing!</div>
+        <div class="mini-stats">
+          <div class="mini-stat"><strong id="sideDone">0</strong><span>✓ Bajarilgan</span></div>
+          <div class="mini-stat"><strong id="sideLeft">0</strong><span>◷ Kutilmoqda</span></div>
+        </div>
+        <div class="tip">
+          <strong>✨ Bugungi maslahat</strong>
+          <p id="dailyTip">Eng muhim ishingdan boshlagin. Bir vaqtning o‘zida bitta vazifaga e'tibor ber.</p>
+        </div>
+      </section>
+    </div>
+    <footer>DAYFLOW © <span id="year"></span> — Vaqtingni boshqar, maqsadingga erish.</footer>
+  </main>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const STORAGE_KEY = "dayflow-tasks-v1";
+let tasks = [];
+let currentFilter = "all";
+
+try {
+  const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+  if (Array.isArray(saved)) tasks = saved.filter(t =>
+    t && typeof t.id === "string" &&
+    typeof t.title === "string" &&
+    typeof t.done === "boolean"
+  );
+} catch (error) {
+  tasks = [];
+}
+
+function saveTasks() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+  } catch (error) {
+    alert("Rejani saqlab bo‘lmadi. Brauzer xotirasini tekshiring.");
+  }
+}
+
+function updateClock() {
+  const now = new Date();
+  $("dateLabel").textContent = now.toLocaleDateString("uz-UZ", {
+    weekday:"long", day:"numeric", month:"long", year:"numeric"
+  });
+  $("clock").textContent = now.toLocaleTimeString("uz-UZ", {
+    hour:"2-digit", minute:"2-digit"
+  });
+  $("year").textContent = now.getFullYear();
+}
+updateClock();
+setInterval(updateClock, 30000);
+
+function render() {
+  const done = tasks.filter(t => t.done).length;
+  const pending = tasks.length - done;
+  const percent = tasks.length ? Math.round(done / tasks.length * 100) : 0;
+
+  $("totalCount").textContent = tasks.length;
+  $("doneCount").textContent = done;
+  $("pendingCount").textContent = pending;
+  $("sideDone").textContent = done;
+  $("sideLeft").textContent = pending;
+  $("percent").textContent = percent + "%";
+  $("ring").style.setProperty("--progress", percent + "%");
+  $("progressCaption").textContent = tasks.length
+    ? percent === 100 ? "Ajoyib! Barcha vazifalar bajarildi 🎉" : "Davom et! Sen uddalaysan 💪"
+    : "Boshlash uchun vazifa qo‘shing!";
+
+  const titles = {
+    all:"📋 Barcha vazifalar",
+    today:"📌 Bugungi vazifalar",
+    done:"✅ Bajarilgan vazifalar",
+    pending:"⏳ Bajarilmagan vazifalar"
+  };
+  $("listTitle").textContent = titles[currentFilter];
+  const visible = tasks.filter(t => {
+    if (currentFilter === "done") return t.done;
+    if (currentFilter === "pending") return !t.done;
+    return true;
+  }).sort((a,b) => (a.time || "99:99").localeCompare(b.time || "99:99"));
+
+  $("listCount").textContent = visible.length + " ta vazifa";
+  const list = $("taskList");
+  list.replaceChildren();
+
+  if (!visible.length) {
+    const empty = document.createElement("div");
+    empty.className = "empty";
+    empty.textContent = currentFilter === "done"
+      ? "Hali bajarilgan vazifa yo‘q."
+      : currentFilter === "pending"
+      ? "Barcha vazifalar bajarilgan! 🎉"
+      : "Hozircha rejang bo‘sh. Birinchi vazifangni qo‘sh!";
+    list.appendChild(empty);
+  }
+
+  visible.forEach(task => {
+    const row = document.createElement("div");
+    row.className = "task" + (task.done ? " done" : "");
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.className = "task-check";
+    checkbox.checked = task.done;
+    checkbox.setAttribute("aria-label", "Vazifani bajarilgan deb belgilash");
+    checkbox.addEventListener("change", () => {
+      task.done = checkbox.checked;
+      saveTasks();
+      render();
+    });
+
+    const info = document.createElement("div");
+    info.className = "task-info";
+
+    const name = document.createElement("div");
+    name.className = "task-name";
+    name.textContent = task.title;
+
+    const time = document.createElement("div");
+    time.className = "task-time";
+    time.textContent = "◷ " + (task.time || "Vaqt belgilanmagan");
+
+    info.append(name, time);
+
+    const tag = document.createElement("span");
+    tag.className = "tag";
+    tag.textContent = task.category || "Shaxsiy";
+
+    const del = document.createElement("button");
+    del.className = "delete";
+    del.type = "button";
+    del.textContent = "×";
+    del.title = "Vazifani o‘chirish";
+    del.setAttribute("aria-label", "Vazifani o‘chirish");
+    del.addEventListener("click", () => {
+      if (confirm("Ushbu vazifani o‘chirmoqchimisiz?")) {
+        tasks = tasks.filter(t => t.id !== task.id);
+        saveTasks();
+        render();
+      }
+    });
+
+    row.append(checkbox, info, tag, del);
+    list.appendChild(row);
+  });
+
+  document.querySelectorAll(".nav-item").forEach(item => {
+    item.classList.toggle("active", item.dataset.filter === currentFilter);
+  });
+}
+
+$("taskForm").addEventListener("submit", event => {
+  event.preventDefault();
+  const title = $("taskInput").value.trim();
+  if (!title) return;
+
+  tasks.push({
+    id: (crypto.randomUUID ? crypto.randomUUID() : Date.now() + "-" + Math.random()),
+    title,
+    time: $("taskTime").value,
+    category: $("taskCategory").value,
+    done: false
+  });
+
+  saveTasks();
+  $("taskInput").value = "";
+  render();
+  $("taskInput").focus();
+});
+
+document.querySelectorAll(".nav-item").forEach(item => {
+  item.addEventListener("click", () => {
+    currentFilter = item.dataset.filter;
+    render();
+  });
+});
+
+$("sampleBtn").addEventListener("click", () => {
+  const samples = [
+    ["Uyg‘onish va kunni rejalash", "07:00", "Shaxsiy"],
+    ["Nonushta qilish", "07:30", "Shaxsiy"],
+    ["Dars yoki ish bilan shug‘ullanish", "09:00", "O‘qish"],
+    ["Tushlik va qisqa tanaffus", "13:00", "Dam olish"],
+    ["Sport bilan shug‘ullanish", "17:00", "Sport"],
+    ["Kitob o‘qish", "20:00", "O‘qish"]
+  ];
+  const existing = new Set(tasks.map(t => t.title.toLowerCase()));
+  const newTasks = samples.filter(s => !existing.has(s[0].toLowerCase()));
+  newTasks.forEach(s => tasks.push({
+    id: crypto.randomUUID ? crypto.randomUUID() : Date.now() + "-" + Math.random(),
+    title:s[0], time:s[1], category:s[2], done:false
+  }));
+  saveTasks();
+  render();
+});
+
+const tips = [
+  "Eng muhim ishingdan boshlagin. Bir vaqtning o‘zida bitta vazifaga e'tibor ber.",
+  "Har 25 daqiqalik diqqatli ishdan keyin qisqa tanaffus qilib tur.",
+  "Rejangga dam olish vaqtini ham qo‘sh. Muvozanat muhim!",
+  "Kechqurun kuningni ko‘rib chiq va ertangi kun uchun 3 ta asosiy maqsad yoz."
+];
+const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(),0,0)) / 86400000);
+$("dailyTip").textContent = tips[dayOfYear % tips.length];
+
+render();
+</script>
+</body>
+</html>
